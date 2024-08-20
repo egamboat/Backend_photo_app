@@ -1,0 +1,22 @@
+# Archivos de configuración del entorno
+.env
+
+# Dependencias de Node.js
+node_modules/
+# Archivos de compilación
+/dist/
+/build/
+
+# Archivos binarios
+*.exe
+*.dll
+# Archivos de sistema
+.DS_Store
+Thumbs.db
+
+# Archivos de configuración de IDEs
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
