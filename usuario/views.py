@@ -35,6 +35,27 @@ def register(request):
 
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+@api_view(['POST'])
+def reset_password(request):
+    username_or_email = request.data.get('username_or_email')
+    new_password = request.data.get('new_password')
+
+    if not username_or_email or not new_password:
+        return Response({"error": "Es necesario que coloque su Usuario o Correo y la nueva contraseña."}, status=status.HTTP_400_BAD_REQUEST)
+    try:
+        user = User.objects.get(username=username_or_email)
+    except User.DoesNotExist:
+        try:
+            user = User.objects.get(email=username_or_email)
+        except User.DoesNotExist:
+            return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
+    user.set_password(new_password)
+    user.save()
+
+    return Response({"message": "Reseteo de contraseña realizado."}, status=status.HTTP_200_OK)
+
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
