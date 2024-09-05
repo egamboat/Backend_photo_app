@@ -23,17 +23,22 @@ def login(request):
 @api_view(['POST'])
 def register(request):
     serializer = UserSerializers(data=request.data)
+    
     if serializer.is_valid():
-        serializer.save()
+        user = serializer.save(commit=False)  # No guarda aún en la base de datos
+        user.set_password(serializer.validated_data['password'])  # Encripta la contraseña
+        user.save()  # Ahora guarda el usuario con la contraseña encriptada
+        
+        # Crear token de autenticación
+        token = Token.objects.create(user=user)
 
-        user= User.objects.get(username= serializer.data['username'])
-        user.set_password(serializer.data['password'])
-        user.save()
-
-        token= Token.objects.create(user=user)
-        return Response({'token': token.key, 'user': serializer.data}, status=status. HTTP_201_CREATED)
-
+        return Response({
+            'token': token.key, 
+            'user': serializer.data
+        }, status=status.HTTP_201_CREATED)
+    
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
