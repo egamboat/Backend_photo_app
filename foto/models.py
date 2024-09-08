@@ -4,6 +4,7 @@ from django.conf import settings
 
 class Foto(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL,on_delete=models.CASCADE, related_name='fotos')
+    titulo= models.CharField(max_length=100, null=False)
     foto_url = models.URLField(max_length=255)
     description = models.TextField(blank=True, null=True)
     VISIBILITY_CHOICES = [
@@ -15,7 +16,7 @@ class Foto(models.Model):
     modificacion = models.DateTimeField(auto_now=True)
 
     def __str__(self):
-        return f"Foto {self.id} de {self.user.username}"
+        return f"Foto {self.titulo} del usuario {self.user.username}"
 
 class FotoMetadata(models.Model):
     foto = models.OneToOneField(Foto, on_delete=models.CASCADE, related_name='metadata')

@@ -1,4 +1,4 @@
-from rest_framework.decorators import api_view ,authentication_classes, permission_classes
+from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from .serializers import UserSerializers
 from django.contrib.auth.models import User
@@ -8,35 +8,46 @@ from django.shortcuts import get_object_or_404
 from rest_framework. permissions import IsAuthenticated
 from rest_framework.authentication import TokenAuthentication
 
+
 @api_view(['POST'])
 def login(request):
-    user= get_object_or_404(User, username=request.data['username'])
-    
+    user = get_object_or_404(User, username=request.data['username'])
+
     if not user .check_password(request.data['password']):
-        return Response({"error": "Contraseña Inválida"}, status = status.HTTP_400_BAD_REQUEST)
-    
-    token, _= Token.objects.get_or_create(user= user)
+        return Response({"error": "Contraseña Inválida"}, status=status.HTTP_400_BAD_REQUEST)
+
+    token, _ = Token.objects.get_or_create(user=user)
     serializer = UserSerializers(instance=user)
 
-    return Response({"token":token.key, "user": serializer.data}, status= status.HTTP_200_OK)
+    return Response({"token": token.key, "user": serializer.data}, status=status.HTTP_200_OK)
+
 
 @api_view(['POST'])
 def register(request):
     serializer = UserSerializers(data=request.data)
-    
+
     if serializer.is_valid():
-        user = serializer.save(commit=False)  # No guarda aún en la base de datos
-        user.set_password(serializer.validated_data['password'])  # Encripta la contraseña
+        # Obtén los datos validados, pero no intentes guardar aún
+        user_data = serializer.validated_data
+
+        # Crea el usuario manualmente
+        user = User(
+            username=user_data['username'],
+            email=user_data['email']
+        )
+
+        # Encripta la contraseña
+        user.set_password(user_data['password'])
         user.save()  # Ahora guarda el usuario con la contraseña encriptada
-        
+
         # Crear token de autenticación
         token = Token.objects.create(user=user)
 
         return Response({
-            'token': token.key, 
+            'token': token.key,
             'user': serializer.data
         }, status=status.HTTP_201_CREATED)
-    
+
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -61,12 +72,10 @@ def reset_password(request):
 
     return Response({"message": "Reseteo de contraseña realizado."}, status=status.HTTP_200_OK)
 
+
 @api_view(['GET'])
 @authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def profile(request):
-    
+
     return Response("Está logueado{}".format(request.user.username), status=status.HTTP_200_OK)
-
-
-

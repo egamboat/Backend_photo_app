@@ -3,6 +3,7 @@
 *.pot
 *.pyc
 __pycache__
+_pycache_
 db.sqlite3
 media
 
