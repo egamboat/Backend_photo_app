@@ -7,6 +7,6 @@ router = routers.DefaultRouter()
 router.register(r'fotos', views.FotoView, basename='fotos')
 
 urlpatterns = [
-    path("foto_api/", include(router.urls)),
+    path("api/", include(router.urls)),
     #path("documentacion/", include_docs_urls(title="Foto Apis"))
 ]
