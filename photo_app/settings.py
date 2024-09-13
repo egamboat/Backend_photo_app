@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'corsheaders',
     "photo_app",
     "usuario.apps.UsuarioConfig",
+    'coreapi',
     "foto",
 ]
 
@@ -61,6 +62,8 @@ MIDDLEWARE = [
 ROOT_URLCONF = "photo_app.urls"
 
 REST_FRAMEWORK = {
+    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
         'rest_framework.authentication.TokenAuthentication',
