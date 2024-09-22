@@ -79,3 +79,14 @@ def reset_password(request):
 def profile(request):
 
     return Response("Está logueado{}".format(request.user.username), status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+@authentication_classes([TokenAuthentication])
+@permission_classes([IsAuthenticated])
+def logout(request):
+    try:
+        # Eliminar el token del usuario autenticado
+        request.user.auth_token.delete()
+        return Response({"success": "Sesión cerrada correctamente."}, status=status.HTTP_200_OK)
+    except Token.DoesNotExist:
+        return Response({"error": "Token no encontrado."}, status=status.HTTP_400_BAD_REQUEST)
