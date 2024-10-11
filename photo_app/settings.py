@@ -101,7 +101,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'photo_app',
         'USER': 'postgres',
-        'PASSWORD': '12345',
+        'PASSWORD': 'esau2001',
         'HOST': 'localhost',
         'PORT': '5432',
     }
