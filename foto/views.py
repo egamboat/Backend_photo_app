@@ -17,5 +17,13 @@ class ComentarioView(viewsets.ModelViewSet):
     serializer_class= ComentarioSerializer
     queryset= Comentario.objects.all()
 
-    def editar():
-        pass
+    def get_queryset(self):
+        """
+        Filtrar comentarios por el ID de la foto.
+        Si no se proporciona el ID de la foto, retorna todos los comentarios.
+        """
+        foto_id = self.request.query_params.get('foto_id')
+        if foto_id:
+            return Comentario.objects.filter(foto_id=foto_id)
+        return super().get_queryset()
+
