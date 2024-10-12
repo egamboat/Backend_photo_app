@@ -1,3 +1,4 @@
+from django.http import Http404
 from rest_framework.decorators import api_view, authentication_classes, permission_classes
 from rest_framework.response import Response
 from .serializers import UserSerializers
@@ -11,10 +12,13 @@ from rest_framework.authentication import TokenAuthentication
 
 @api_view(['POST'])
 def login(request):
-    user = get_object_or_404(User, username=request.data['username'])
+    try:
+        user = get_object_or_404(User, username=request.data['username'])
+    except Http404:
+        return Response({"error": "Usuario no encontrado."}, status=status.HTTP_404_NOT_FOUND)
 
-    if not user .check_password(request.data['password']):
-        return Response({"error": "Contraseña Inválida"}, status=status.HTTP_400_BAD_REQUEST)
+    if not user.check_password(request.data['password']):
+        return Response({"error": "Contraseña inválida."}, status=status.HTTP_400_BAD_REQUEST)
 
     token, _ = Token.objects.get_or_create(user=user)
     serializer = UserSerializers(instance=user)
