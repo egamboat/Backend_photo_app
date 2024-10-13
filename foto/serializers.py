@@ -8,6 +8,12 @@ class FotoSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class ComentarioSerializer(serializers.ModelSerializer):
+    nombre_usuario = serializers.SerializerMethodField()
+
     class Meta:
         model = Comentario
-        fields = "__all__"
+        fields = ['id', 'texto_comentado', 'creacion', 'foto', 'nombre_usuario']
+        read_only_fields = ['creacion', 'nombre_usuario']
+
+    def get_nombre_usuario(self, obj):
+        return obj.user.username

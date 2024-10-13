@@ -6,7 +6,6 @@ from rest_framework.authentication import TokenAuthentication
 from rest_framework import status, viewsets
 from .models import Foto, Comentario
 from .serializers import FotoSerializer,ComentarioSerializer
-
 # Vista para crear una nueva foto
 
 class FotoView(viewsets.ModelViewSet):
@@ -23,7 +22,11 @@ class ComentarioView(viewsets.ModelViewSet):
         Si no se proporciona el ID de la foto, retorna todos los comentarios.
         """
         foto_id = self.request.query_params.get('foto_id')
+        queryset = Comentario.objects.all()
+
         if foto_id:
-            return Comentario.objects.filter(foto_id=foto_id)
-        return super().get_queryset()
+            queryset = queryset.filter(foto_id=foto_id)
+            
+        queryset = queryset.select_related('user')
+        return queryset
 
