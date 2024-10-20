@@ -12,7 +12,7 @@ class ComentarioSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Comentario
-        fields = ['id', 'texto_comentado', 'creacion', 'foto', 'nombre_usuario']
+        fields = ['id', 'texto_comentado', 'creacion', 'foto', 'nombre_usuario', 'user']
         read_only_fields = ['creacion', 'nombre_usuario']
 
     def get_nombre_usuario(self, obj):

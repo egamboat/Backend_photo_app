@@ -6,11 +6,12 @@ from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
 from rest_framework import status
 from django.shortcuts import get_object_or_404
-from rest_framework. permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated,AllowAny
 from rest_framework.authentication import TokenAuthentication
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def login(request):
     try:
         user = get_object_or_404(User, username=request.data['username'])
@@ -27,14 +28,13 @@ def login(request):
 
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
 def register(request):
     serializer = UserSerializers(data=request.data)
 
     if serializer.is_valid():
-        # Obtén los datos validados, pero no intentes guardar aún
         user_data = serializer.validated_data
 
-        # Crea el usuario manualmente
         user = User(
             username=user_data['username'],
             email=user_data['email']
@@ -78,14 +78,12 @@ def reset_password(request):
 
 
 @api_view(['GET'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def profile(request):
 
     return Response("Está logueado{}".format(request.user.username), status=status.HTTP_200_OK)
 
 @api_view(['POST'])
-@authentication_classes([TokenAuthentication])
 @permission_classes([IsAuthenticated])
 def logout(request):
     try:
