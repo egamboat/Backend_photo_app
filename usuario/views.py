@@ -84,7 +84,7 @@ def profile(request):
     return Response("Está logueado{}".format(request.user.username), status=status.HTTP_200_OK)
 
 @api_view(['POST'])
-@permission_classes([IsAuthenticated])
+@permission_classes([AllowAny])
 def logout(request):
     try:
         # Eliminar el token del usuario autenticado
